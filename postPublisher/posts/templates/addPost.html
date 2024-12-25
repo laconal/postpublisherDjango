@@ -1,0 +1,174 @@
+{% extends "projectPage.html" %}
+
+{% block title %}
+    Add post
+{% endblock  %}
+
+{% block content %}
+    <div class="glass-container">
+        <div class="glass-card">
+            <h1 class="glass-title">Add a New Post</h1>
+            <form method="post" class="add-post-form" action = "{% url 'posts:addPost' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="title" class="form-label">Title:</label>
+                    <input 
+                        type="text" 
+                        id="title" 
+                        name="title" 
+                        class="glass-input" 
+                        placeholder="Enter the title" 
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="body" class="form-label">Body:</label>
+                    <textarea 
+                        id="body" 
+                        name="body" 
+                        class="glass-input" 
+                        placeholder="Write the content here" 
+                        rows="5" 
+                        required></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="glass-button submit-button">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<style>
+
+    .glass-container {
+        max-width: 1000px;
+        min-height: 100vh;
+        padding: 100px;
+        margin-left: 500px;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .glass-title {
+        font-size: 2.5rem;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 30px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 1rem;
+        color: #fff;
+        margin-bottom: 5px;
+    }
+
+    .glass-input {
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .glass-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .glass-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .glass-button {
+        width: 100%;
+        padding: 12px 20px;
+        font-size: 1rem;
+        background: rgba(92, 107, 192, 0.6);
+        border: none;
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .glass-button:hover {
+        background: rgba(92, 107, 192, 0.8);
+        transform: translateY(-2px);
+    }
+
+    .submit-button {
+        font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
+        .glass-card {
+            padding: 20px;
+        }
+
+        .glass-title {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% comment %} {% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm p-4">
+                <div class="card-body">
+                    <h1 class="card-title text-center mb-4">Add a New Post</h1>
+                    <form method="post" class="add-post-form">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="title" class="form-label"><b>Title:</b></label>
+                            <input 
+                                type="text" 
+                                id="title" 
+                                name="title" 
+                                class="form-control" 
+                                placeholder="Enter the title" 
+                                required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="body" class="form-label"><b>Body:</b></label>
+                            <textarea 
+                                id="body" 
+                                name="body" 
+                                class="form-control" 
+                                placeholder="Write the content here" 
+                                rows="5" 
+                                required></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-primary w-100 py-2">
+                                <b>Submit</b>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} {% endcomment %}

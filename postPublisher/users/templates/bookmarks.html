@@ -1,0 +1,191 @@
+{% extends "projectPage.html" %}
+
+{% block title %}
+    My bookmarks
+{% endblock %}
+
+{% comment %} {% block content %}
+    <link rel="stylesheet" href="style.css">
+    <h2>Bookmarked posts:</h2>
+    {% for post in posts %}
+        {% csrf_token %}
+        <p><b>{{ post.title }}</p></b>
+        <p>{{ post.body }}</p>
+        <p>{{ post.createdTime}}</p>
+        <form method = "POST" action = "{% url 'users:deleteFromBookmarks' post.id %}">
+            {% csrf_token %}
+            <button type="submit">Delete from bookmarks</button>
+        </form>
+    {% endfor %}
+{% endblock %} {% endcomment %}
+
+{% block content %}
+    {% comment %} <link rel="stylesheet" href="style.css"> {% endcomment %}
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .parent-container {
+            display: grid; /* Makes the parent a grid container */
+            place-items: center; /* Centers both horizontally and vertically */
+            height: 100vh; /* Makes the parent full viewport height */
+            width: 100%; /* Optional: Ensures full width */
+        }
+        .glass-container {
+            max-width: 1000px;
+            width: 100%;
+            padding: 100px;
+        }
+        
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .glass-title {
+            font-size: 2.5em;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        
+        .glass-subtitle {
+            font-size: 1.8em;
+            color: #e0e0e0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+        
+        .glass-post {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .post-title {
+            font-size: 1.4em;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+        
+        .post-body {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .post-time {
+            font-size: 0.9em;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 15px;
+        }
+        
+        .post-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        
+        .glass-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 20px;
+            border-radius: 30px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9em;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+        
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .glass-button.delete {
+            background: rgba(255, 99, 71, 0.2);
+            color: #fff;
+        }
+        
+        .glass-button.delete:hover {
+            background: rgba(255, 99, 71, 0.3);
+        }
+        
+        .inline-form {
+            display: inline;
+        }
+        
+        .no-posts {
+            color: #fff;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        @media (max-width: 600px) {
+            .glass-card {
+                padding: 20px;
+            }
+        
+            .glass-title {
+                font-size: 2em;
+            }
+        
+            .glass-subtitle {
+                font-size: 1.5em;
+            }
+        
+            .post-actions {
+                flex-direction: column;
+            }
+        
+            .glass-button {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+    <div class="parent-container">
+        <div class="glass-container">
+            <div class="glass-card">
+                <h1 class="glass-title">Bookmarked Posts</h1>
+                {% for post in posts %}
+                    <article class="glass-post">
+                        <h3 class="post-title">{{ post.title }}</h3>
+                        <p class="post-body">{{ post.body }}</p>
+                        <p class="post-time">{{ post.createdTime }}</p>
+                        <div class="post-actions">
+                            <form method="POST" action="{% url 'users:deleteFromBookmarks' post.id %}?next={{ request.path }}" class="inline-form">
+                                {% csrf_token %}
+                                <button type="submit" class="glass-button delete">Delete from bookmarks</button>
+                            </form>
+                        </div>
+                    </article>
+                {% empty %}
+                    <p class="no-posts">No bookmarked posts yet. Start bookmarking!</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

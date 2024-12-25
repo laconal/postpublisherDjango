@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container for links and buttons */
+nav {
+    background-color: #007bff;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav a, nav form button {
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    background-color: #007bff;
+    border: 1px solid #0056b3;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+nav a:hover, nav form button:hover {
+    background-color: #0056b3;
+}
+
+nav form {
+    display: inline;
+}
+
+nav a {
+    margin-right: 15px;
+}
+
+nav a:last-child {
+    margin-right: 0;
+}
+
+/* Styling the title in the header */
+h1 {
+    text-align: center;
+    color: #333;
+    margin-top: 20px;
+}
+
+/* Styling the content block */
+.content {
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Button for login/logout/register */
+.auth-links {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.auth-links a, .auth-links form button {
+    padding: 10px 20px;
+    background-color: #28a745;
+    border: none;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.auth-links a:hover, .auth-links form button:hover {
+    background-color: #218838;
+}

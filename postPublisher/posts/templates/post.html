@@ -1,0 +1,409 @@
+{% extends "projectPage.html" %}
+
+{% block title %}
+    {{ post.title }}
+{% endblock title %}
+
+
+{% block content %}
+<script>
+    function toggleReplyForm(formId) {
+        const form = document.getElementById(formId);
+        if (form.style.display === "none") {
+            form.style.display = "block";
+        } else {
+            form.style.display = "none";
+        }
+    }
+</script>
+
+<div class="dark-glassmorphism-wrapper">
+    <div class="glass-container">
+        <div class="glass-card post-detail">
+            <h1 class="glass-title">{{ post.title }}</h1>
+            <p class="post-meta">By <b>{{ post.createdBy }}</b> on {{ post.createdTime }}</p>
+            <p class="post-body">{{ post.body }}</p>
+            <div class="post-actions">
+                <p class="post-stats"><b>Likes:</b> {{ post.likes.count }} | <b>Dislikes:</b> {{ post.dislikes.count }}</p>
+                <div class="action-buttons">
+                    <form action="{% url 'posts:likePost' post.id %}?next={{ request.path }}" method="post" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="glass-button like-button">👍 Like</button>
+                    </form>
+                    <form action="{% url 'posts:dislikePost' post.id %}?next={{ request.path }}" method="post" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="glass-button dislike-button">👎 Dislike</button>
+                    </form>
+                </div>
+            </div>
+            {% if post.createdBy == user %}
+            <form action="{% url 'users:deletePost' post.id %}?next={% url 'posts:list' %}" method="post" class="delete-form">
+                {% csrf_token %}
+                <button type="submit" class="glass-button delete-button">🗑️ Delete Post</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <div class="glass-card comments-section">
+            <h2 class="glass-subtitle">Comments</h2>
+            {% for comment in post.comments.all %}
+                <div class="glass-comment">
+                    <p class="comment-author"><b>{{ comment.author }}</b> said:</p>
+                    <p class="comment-body">{{ comment.body }}</p>
+                    <p class="comment-date">On {{ comment.date }}</p>
+                    <div class="comment-actions">
+                        <button onclick="toggleReplyForm('reply-form-1')" class="glass-button reply-button">💬 Reply</button>
+                    </div>
+                </div>
+                {% if comment.subComments.exists %}
+                    {% for reply in comment.subComments.all %}
+                        <div class="glass-reply">
+                            <p class="reply-author"><b>{{ reply.author }}</b> replied:</p>
+                            <p class="reply-body">{{ reply.body }}</p>
+                            <p class="reply-date">{{ reply.date }}</p>
+                            <div class="comment-actions">
+                                <button onclick="toggleReplyForm('reply-form-{{ reply.id }}')" class="glass-button reply-button">💬 Reply</button>
+                            </div>
+                            <div id="reply-form-{{ reply.id }}" class="reply-form" style="display: none;">
+                                <form action="{% url 'posts:replyComment' reply.id %}" method="post">
+                                    {% csrf_token %}
+                                    <textarea name="commentText" rows="4" class="glass-input" placeholder="Write your reply here..."></textarea>
+                                    <button type="submit" class="glass-button submit-button">Submit Reply</button>
+                                </form>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <div id="reply-form-1" class="reply-form" style="display: none;">
+                    <form action="{% url 'posts:replyComment' comment.id %}" method="post">
+                        {% csrf_token %}
+                        <textarea name="commentText" rows="4" class="glass-input" placeholder="Write your reply here..."></textarea>
+                        <button type="submit" class="glass-button submit-button">Submit Reply</button>
+                    </form>
+                </div>
+            {% empty %}
+                <p class="no-comments">No comments yet. Be the first to comment!</p>
+            {% endfor %}
+        </div>
+
+        <div class="glass-card add-comment">
+            <h2 class="glass-subtitle">Add a Comment</h2>
+            <form action="{% url 'posts:leaveComment' post.id %}" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="commentText" class="form-label">Your Comment:</label>
+                    <textarea name="commentText" id="commentText" rows="4" class="glass-input" placeholder="Write your comment here..."></textarea>
+                </div>
+                <button type="submit" class="glass-button submit-button">💬 Submit Comment</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+    .dark-glassmorphism-wrapper {
+        background: linear-gradient(135deg, #000000, #1a237e, #4a148c);
+        min-height: 100vh;
+        box-sizing: border-box;
+    }
+
+    .glass-container {
+        width: 1000px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .glass-card {
+        margin-top: 50px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 50px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .glass-title {
+        font-size: 2.5rem;
+        color: #fff;
+        margin-bottom: 20px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .glass-subtitle {
+        font-size: 1.8rem;
+        color: #e0e0e0;
+        margin-bottom: 20px;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .post-meta, .post-stats {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 15px;
+    }
+
+    .post-body {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+
+    .post-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .glass-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        color: #fff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .glass-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
+
+    .like-button {
+        background: rgba(40, 167, 69, 0.2);
+    }
+
+    .like-button:hover {
+        background: rgba(40, 167, 69, 0.3);
+    }
+
+    .dislike-button {
+        background: rgba(220, 53, 69, 0.2);
+    }
+
+    .dislike-button:hover {
+        background: rgba(220, 53, 69, 0.3);
+    }
+
+    .delete-button {
+        background: rgba(220, 53, 69, 0.2);
+        margin-top: 20px;
+    }
+
+    .delete-button:hover {
+        background: rgba(220, 53, 69, 0.3);
+    }
+
+    .glass-comment {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+
+    .comment-author {
+        font-size: 1rem;
+        color: #fff;
+        margin-bottom: 5px;
+    }
+
+    .comment-body {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 5px;
+    }
+
+    .comment-date {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .no-comments {
+        color: rgba(255, 255, 255, 0.7);
+        font-style: italic;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label {
+        display: block;
+        font-size: 1rem;
+        color: #fff;
+        margin-bottom: 5px;
+    }
+
+    .glass-input {
+        width: 100%;
+        padding: 10px 15px;
+        font-size: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 5px;
+        color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .glass-input:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .glass-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .submit-button {
+        background: rgba(92, 107, 192, 0.6);
+        width: 100%;
+    }
+
+    .submit-button:hover {
+        background: rgba(92, 107, 192, 0.8);
+    }
+
+    .inline-form {
+        display: inline;
+    }
+
+    .glass-reply {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 10px;
+        margin-left: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .glass-reply {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 8px;
+        padding: 10px;
+        margin-top: 10px;
+        margin-left: 20px;
+        margin-bottom: 10px;
+    }
+    
+    .reply-author {
+        font-size: 0.9rem;
+        color: #fff;
+        margin-bottom: 3px;
+    }
+    
+    .reply-body {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 3px;
+    }
+    
+    .reply-date {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    .reply-button {
+        background: rgba(92, 107, 192, 0.4);
+        font-size: 0.8rem;
+        padding: 5px 10px;
+        margin-top: 5px;
+    }
+    
+    .reply-button:hover {
+        background: rgba(92, 107, 192, 0.6);
+    }
+    
+    .reply-form {
+        margin-top: 10px;
+    }
+    
+    .replies-container {
+            margin-top: 10px;
+            margin-left: 20px;
+        }
+    
+        .reply-toggle {
+            font-size: 0.8rem;
+            padding: 5px 10px;
+            margin-top: 5px;
+            background: rgba(92, 107, 192, 0.4);
+        }
+    
+        .reply-toggle:hover {
+            background: rgba(92, 107, 192, 0.6);
+        }
+    
+        .reply-icon {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+    
+        .reply-form .glass-input {
+            margin-bottom: 10px;
+        }
+    
+        .reply-form .submit-button {
+            width: auto;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+    
+    .comment-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    @media (max-width: 2560 px) {
+        .glass-card {
+            padding: 20px;
+        }
+
+        .glass-title {
+            font-size: 2rem;
+        }
+
+        .glass-subtitle {
+            font-size: 1.5rem;
+        }
+
+        .post-actions {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .post-stats {
+            margin-bottom: 10px;
+        }
+
+        .action-buttons {
+            width: 100%;
+        }
+
+        .glass-button {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .glass-reply {
+            margin-left: 10px;
+        }
+        .replies-container {
+                margin-left: 10px;
+            }
+    }
+</style>
+{% endblock %}
